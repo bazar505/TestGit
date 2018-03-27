@@ -20,6 +20,7 @@ namespace TestGit
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = "After";
+            MessageBox.Show("Hello C#");
         }
     }
 }
