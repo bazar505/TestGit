@@ -22,6 +22,7 @@ namespace TestGit
             label1.Text = "After";
             MessageBox.Show("Hello C#");
             int i = 1000;
+            this.Text = (++i).ToString();
         }
     }
 }
