@@ -5,12 +5,14 @@ namespace TestGit
 {
     public partial class Form1 : Form
     {
-        public Form1()        {            InitializeComponent();        }
+        public Form1() { InitializeComponent(); }
 
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = "After";
             MessageBox.Show("Hello C# нах");
+            Guid g = Guid.NewGuid();
+            this.Text = g.ToString();
         }
     }
 }
