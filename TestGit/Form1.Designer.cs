@@ -36,6 +36,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btn2 = new System.Windows.Forms.Button();
             this.btn3 = new System.Windows.Forms.Button();
+            this.btnAPI = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btn1
@@ -107,11 +108,22 @@
             this.btn3.UseVisualStyleBackColor = true;
             this.btn3.Click += new System.EventHandler(this.Btn3_Click);
             // 
+            // btnAPI
+            // 
+            this.btnAPI.Location = new System.Drawing.Point(255, 473);
+            this.btnAPI.Name = "btnAPI";
+            this.btnAPI.Size = new System.Drawing.Size(75, 23);
+            this.btnAPI.TabIndex = 2;
+            this.btnAPI.Text = "API";
+            this.btnAPI.UseVisualStyleBackColor = true;
+            this.btnAPI.Click += new System.EventHandler(this.btnAPI_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(500, 508);
+            this.Controls.Add(this.btnAPI);
             this.Controls.Add(this.lvTable);
             this.Controls.Add(this.btn3);
             this.Controls.Add(this.btn2);
@@ -132,6 +144,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button btn2;
         private System.Windows.Forms.Button btn3;
+        private System.Windows.Forms.Button btnAPI;
     }
 }
 

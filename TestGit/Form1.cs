@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Security;
+using System.Runtime.InteropServices;
 
 namespace TestGit
 {
@@ -12,6 +14,16 @@ namespace TestGit
         }
 
         /** https://rsdn.org/forum/winapi/4159851.flat - интересная статья по системным таймерам **/
+
+        [SuppressUnmanagedCodeSecurity]
+        [DllImport("kernel32.dll")]
+        internal static extern void GetSystemTimeAsFileTime(ref Form1.FILE_TIME lpSystemTimeAsFileTime);
+
+        internal struct FILE_TIME
+        {
+            internal int ftTimeLow;
+            internal int ftTimeHigh;
+        }
 
         private void Btn1_Click(object sender, EventArgs e) //Явно 
         {
@@ -172,6 +184,54 @@ namespace TestGit
             btn1.Enabled = true;
             btn2.Enabled = true;
             btn3.Enabled = true;
+        }
+
+        private void btnAPI_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btn1.Enabled = false;
+                btn2.Enabled = false;
+                btn3.Enabled = false;
+
+                lvTable.BeginUpdate(); //защита от мерцания контрола
+                lvTable.Items.Clear();
+
+                long Undo = 0, Diff = 0;
+                TimeSpan ts;
+
+                for (int i = 1; i < 26; i++)
+                {
+                    LoadProc(); //дали нагрузку на процессор для увеличения времени работы цикла
+                    var d = new FILE_TIME(); GetSystemTimeAsFileTime(ref d); //получили с чипа текущее время
+                    var lv = lvTable.Items.Add(i.ToString()); //добавили строку в таблицу с номером итерации
+                    lv.SubItems.Add(new DateTime(d.ftTimeHigh - d.ftTimeLow).ToString()); //2 колонка - время 
+                    lv.SubItems.Add((d.ftTimeHigh + d.ftTimeLow).ToString("X")); //3 колонка - сериализовнное время
+                    Diff = (Undo == 0) ? 0 : (d.ftTimeHigh + d.ftTimeLow) - Undo; //вычислили разницу между строками в тактах
+                    ts = new TimeSpan(Diff);
+                    lv.SubItems.Add($"{Diff.ToString()} ({ts.TotalMilliseconds} мс)"); //4 колонка - разница в тактах от прошлого значения
+                    Undo = d.ftTimeHigh + d.ftTimeLow; //перезаполнили "прошлое" значение текущим для последующего сравнения
+                    lv.BackColor = (Diff > 0) //фон строки белый для разницы 0, красный для 10000 и оранжевый для 100000
+                        ? (Diff > 11000) ? System.Drawing.Color.Orange : System.Drawing.Color.MediumVioletRed
+                        : System.Drawing.Color.White;
+                }
+
+                foreach (ColumnHeader c in lvTable.Columns) //делаем отображение таблицы удобным
+                {
+                    c.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                    var w = c.Width;
+                    c.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+                    if (c.Width < w) { c.Width = w; } //если столбец будет пуст, его ширина вернется к ширине по заголовку
+                }
+            }
+            finally
+            {
+                lvTable.EndUpdate(); //обязательно вернули прорисовку обратно
+
+                btn1.Enabled = true;
+                btn2.Enabled = true;
+                btn3.Enabled = true;
+            }
         }
 
         void LoadProc() //Бесполезная нагрузка 
